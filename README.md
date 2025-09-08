@@ -1,36 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kitchen365 Product Catalog
+
+A modern, production-ready e-commerce product catalog built with Next.js 15, TypeScript, and pure CSS. Features a complete product management system with CRUD operations, search, filtering, and responsive design.
+
+## Features
+
+- 🛍️ **Product Management**: Full CRUD operations for products
+- 🔍 **Search & Filter**: Advanced search and category filtering
+- 📱 **Responsive Design**: Mobile-first responsive layout
+- 🎨 **Pure CSS**: No CSS frameworks, custom styling
+- 🚀 **Performance Optimized**: Image optimization, caching, and compression
+- 🔒 **Security Hardened**: Rate limiting, input validation, security headers
+- 📊 **Production Ready**: Monitoring, logging, and error handling
+- 🐳 **Docker Support**: Containerized deployment
+- ☁️ **Cloud Ready**: Vercel, Docker, and traditional server deployment
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Pure CSS with CSS Variables
+- **State Management**: React Hooks
+- **Data Storage**: File-based JSON (easily replaceable with database)
+- **Image Optimization**: Next.js Image component
+- **Deployment**: Vercel, Docker, or traditional servers
 
 ## Getting Started
 
-First, run the development server:
+### Development
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. **Clone the repository:**
+
+   ```bash
+   git clone <repository-url>
+   cd product-catalog
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment:**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Run development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Open [http://localhost:3000](http://localhost:3000)** in your browser
+
+### Production Deployment
+
+For detailed production deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+**Quick deployment options:**
+
+- **Vercel**: `vercel --prod`
+- **Docker**: `docker-compose up -d`
+- **Build**: `npm run build:production`
+
+## Project Structure
+
+```
+src/
+├── app/                 # Next.js App Router
+│   ├── api/            # API routes
+│   ├── globals.css     # Global styles
+│   └── layout.tsx      # Root layout
+├── components/         # React components
+├── lib/               # Utility libraries
+│   ├── api.ts         # API client
+│   ├── cache.ts       # Caching utilities
+│   ├── errorHandler.ts # Error handling
+│   ├── fileStorage.ts  # Data storage
+│   ├── logger.ts      # Logging utilities
+│   ├── rateLimit.ts   # Rate limiting
+│   └── validation.ts  # Input validation
+└── types/             # TypeScript types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API Endpoints
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `GET /api/products` - List all products with filtering
+- `POST /api/products` - Create new product
+- `GET /api/products/[id]` - Get specific product
+- `PUT /api/products/[id]` - Update product
+- `DELETE /api/products/[id]` - Delete product
+- `POST /api/products/seed` - Seed sample data
+- `GET /api/health` - Health check endpoint
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+```bash
+# Development
+npm run dev              # Start development server
+npm run lint             # Run ESLint
+npm run type-check       # TypeScript type checking
 
-To learn more about Next.js, take a look at the following resources:
+# Production
+npm run build            # Build for production
+npm run build:production # Build with production env
+npm run start            # Start production server
+npm run validate         # Run all checks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Utilities
+npm run clean            # Clean build artifacts
+npm run export           # Export static site
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+See `.env.example` for all available environment variables:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `NODE_ENV` - Environment (development/production)
+- `NEXT_PUBLIC_API_URL` - Public API URL
+- `RATE_LIMIT_MAX_REQUESTS` - Rate limiting configuration
+- `LOG_LEVEL` - Logging level
+- `ENABLE_COMPRESSION` - Enable gzip compression
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Production Features
+
+### Security
+
+- Rate limiting (100 req/15min per IP)
+- Input validation and sanitization
+- Security headers (CSP, HSTS, etc.)
+- Error handling with proper logging
+
+### Performance
+
+- Image optimization with Next.js Image
+- In-memory caching for API responses
+- Compression and minification
+- Static asset optimization
+
+### Monitoring
+
+- Health check endpoint (`/api/health`)
+- Structured JSON logging
+- Performance metrics
+- Error tracking
+
+### Deployment
+
+- Docker containerization
+- Vercel deployment configuration
+- Traditional server deployment
+- Environment-specific configurations
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and validation: `npm run validate`
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For deployment and production issues, refer to:
+
+- [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment guide
+- Health check endpoint: `/api/health`
+- Application logs for troubleshooting

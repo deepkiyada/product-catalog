@@ -1,5 +1,5 @@
 import ProductCatalog from "@/components/ProductCatalog";
 
-export default function Home() {
+export default function ProductsPage() {
   return <ProductCatalog />;
 }
