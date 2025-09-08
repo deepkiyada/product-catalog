@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Production optimizations
   compress: true,
   poweredByHeader: false,
@@ -75,7 +74,7 @@ const nextConfig: NextConfig = {
 
   // Output configuration - use standalone for Docker, remove for Netlify
   // output: "standalone",
-
+  
   // Uncomment for static export if needed
   // output: "export",
   // trailingSlash: true,
@@ -99,4 +98,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
