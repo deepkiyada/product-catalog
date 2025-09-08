@@ -76,6 +76,11 @@ const nextConfig: NextConfig = {
   // Output configuration - use standalone for Docker, remove for Netlify
   // output: "standalone",
 
+  // Uncomment for static export if needed
+  // output: "export",
+  // trailingSlash: true,
+  // images: { unoptimized: true },
+
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {

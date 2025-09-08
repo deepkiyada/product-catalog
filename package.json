@@ -15,6 +15,7 @@
     "validate": "npm run type-check && npm run lint",
     "clean": "rm -rf .next out",
     "export": "next export",
+    "build:netlify": "next build",
     "serve": "npx serve@latest out",
     "test:build": "npm run build && npm run start &",
     "precommit": "npm run validate"
