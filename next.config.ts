@@ -73,8 +73,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
 
-  // Output configuration
-  output: "standalone",
+  // Output configuration - use standalone for Docker, remove for Netlify
+  // output: "standalone",
 
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
