@@ -72,13 +72,8 @@ const nextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
 
-  // Output configuration - use standalone for Docker, remove for Netlify
-  // output: "standalone",
-  
-  // Uncomment for static export if needed
-  // output: "export",
-  // trailingSlash: true,
-  // images: { unoptimized: true },
+  // Output configuration optimized for Netlify
+  // Note: Netlify plugin handles the output configuration automatically
 
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {

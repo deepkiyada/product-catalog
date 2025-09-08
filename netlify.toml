@@ -7,6 +7,10 @@
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_VERSION = "18"
 
+# Enable Next.js plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 # Netlify Functions for API routes
 [functions]
   directory = ".netlify/functions"
@@ -36,12 +40,11 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-# Handle client-side routing
+# Handle client-side routing for SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  conditions = {Role = ["admin"]}
 
 # Environment variables (you'll set these in Netlify dashboard)
 # NODE_ENV = "production"
