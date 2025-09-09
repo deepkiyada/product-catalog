@@ -1,15 +1,16 @@
-# Kitchen365 Product Catalog - Production Deployment Guide
+# Product Catalog - Production Deployment Guide
 
 ## Overview
 
-This guide covers the complete production deployment process for the Kitchen365 Product Catalog application.
+This guide covers the complete production deployment process for the Product Catalog application with Supabase integration.
 
 ## Prerequisites
 
-- Node.js 18.18.0 or higher
-- npm or yarn package manager
+- Node.js 20.0.0 or higher
+- npm package manager
 - Git for version control
-- Production server or cloud platform account
+- Supabase account and project
+- Vercel or Netlify account
 
 ## Environment Setup
 
@@ -18,15 +19,16 @@ This guide covers the complete production deployment process for the Kitchen365 
 Copy the environment template and configure for production:
 
 ```bash
-cp .env.example .env.production
+cp .env.example .env.local
 ```
 
 Required environment variables:
-- `NODE_ENV=production`
-- `NEXT_PUBLIC_API_URL` - Your production API URL
-- `API_BASE_URL` - Internal API base URL
-- `DATA_DIRECTORY` - Directory for data storage
-- `LOG_LEVEL` - Logging level (warn/error for production)
+
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+- `NEXT_PUBLIC_APP_VERSION` - Application version (optional)
+
+See [ENVIRONMENT_VARIABLES.md](./ENVIRONMENT_VARIABLES.md) for detailed configuration.
 
 ### 2. Build Validation
 
@@ -51,11 +53,13 @@ npm run start:production
 ### Option 1: Vercel Deployment (Recommended)
 
 1. **Install Vercel CLI:**
+
    ```bash
    npm i -g vercel
    ```
 
 2. **Deploy:**
+
    ```bash
    vercel --prod
    ```
@@ -68,11 +72,13 @@ npm run start:production
 ### Option 2: Docker Deployment
 
 1. **Build Docker Image:**
+
    ```bash
    docker build -t kitchen365-catalog .
    ```
 
 2. **Run with Docker Compose:**
+
    ```bash
    docker-compose up -d
    ```
@@ -89,16 +95,19 @@ npm run start:production
 ### Option 3: Traditional Server Deployment
 
 1. **Build the application:**
+
    ```bash
    npm run build:production
    ```
 
 2. **Copy files to server:**
+
    ```bash
    rsync -av --exclude node_modules . user@server:/path/to/app/
    ```
 
 3. **Install dependencies on server:**
+
    ```bash
    npm ci --only=production
    ```
@@ -113,6 +122,7 @@ npm run start:production
 ### Security Headers
 
 The application includes security headers configured in `next.config.ts`:
+
 - X-Frame-Options: DENY
 - X-Content-Type-Options: nosniff
 - Referrer-Policy: strict-origin-when-cross-origin
@@ -121,6 +131,7 @@ The application includes security headers configured in `next.config.ts`:
 ### Rate Limiting
 
 Built-in rate limiting is configured:
+
 - 100 requests per 15 minutes per IP
 - Configurable via environment variables
 - Automatic cleanup of expired entries
@@ -143,6 +154,7 @@ curl https://yourdomain.com/api/health
 ```
 
 Response includes:
+
 - Application status
 - Database/file system health
 - Memory usage
@@ -151,6 +163,7 @@ Response includes:
 ### Logging
 
 Logs are structured JSON in production:
+
 - Error logs include stack traces
 - Request/response logging
 - Performance metrics
@@ -159,6 +172,7 @@ Logs are structured JSON in production:
 ### Monitoring Setup
 
 1. **Application Monitoring:**
+
    - Use health check endpoint
    - Monitor response times
    - Track error rates
@@ -173,6 +187,7 @@ Logs are structured JSON in production:
 ### Regular Maintenance
 
 1. **Update Dependencies:**
+
    ```bash
    npm audit
    npm update
@@ -180,6 +195,7 @@ Logs are structured JSON in production:
    ```
 
 2. **Log Rotation:**
+
    - Configure log rotation for production
    - Archive old logs
    - Monitor disk usage
@@ -193,11 +209,13 @@ Logs are structured JSON in production:
 ### Troubleshooting
 
 1. **Application Won't Start:**
+
    - Check environment variables
    - Verify Node.js version
    - Check file permissions
 
 2. **High Memory Usage:**
+
    - Monitor cache size
    - Check for memory leaks
    - Restart application if needed
@@ -210,6 +228,7 @@ Logs are structured JSON in production:
 ### Performance Optimization
 
 1. **CDN Setup:**
+
    - Configure CDN for static assets
    - Enable compression
    - Set appropriate cache headers
@@ -222,11 +241,13 @@ Logs are structured JSON in production:
 ## Security Considerations
 
 1. **Regular Security Updates:**
+
    - Keep dependencies updated
    - Monitor security advisories
    - Apply patches promptly
 
 2. **Access Control:**
+
    - Implement authentication if needed
    - Use HTTPS in production
    - Configure firewall rules
@@ -239,6 +260,7 @@ Logs are structured JSON in production:
 ## Rollback Procedures
 
 1. **Quick Rollback:**
+
    ```bash
    # Revert to previous deployment
    vercel --prod --force
@@ -255,6 +277,7 @@ Logs are structured JSON in production:
 ## Support and Maintenance
 
 For production issues:
+
 1. Check application logs
 2. Verify health check endpoint
 3. Monitor system resources
@@ -264,6 +287,7 @@ For production issues:
 ## Performance Benchmarks
 
 Expected performance metrics:
+
 - Page load time: < 2 seconds
 - API response time: < 500ms
 - Time to first byte: < 200ms

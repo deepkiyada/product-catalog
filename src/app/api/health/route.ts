@@ -1,30 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { readProducts } from '@/lib/fileStorage';
-import { logInfo, logError } from '@/lib/logger';
+import { NextRequest, NextResponse } from "next/server";
+import { getProductsCount } from "@/lib/database";
+import { logInfo, logError } from "@/lib/logger";
 
 // Health check endpoint for monitoring
 export async function GET(request: NextRequest) {
   try {
     const startTime = Date.now();
-    
+
     // Check if the application is running
     const appStatus = {
-      status: 'healthy',
+      status: "healthy",
       timestamp: new Date().toISOString(),
-      version: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
+      version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0",
+      environment: process.env.NODE_ENV || "development",
     };
 
-    // Check database/file system health
-    let dbStatus = 'healthy';
+    // Check database health
+    let dbStatus = "healthy";
     let productCount = 0;
-    
+
     try {
-      const products = readProducts();
-      productCount = products.length;
+      productCount = await getProductsCount();
     } catch (error) {
-      dbStatus = 'unhealthy';
-      logError('Health check: Database/file system error', { error: error instanceof Error ? error.message : 'Unknown error' });
+      dbStatus = "unhealthy";
+      logError("Health check: Database error", {
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
 
     // Check memory usage
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
     };
 
     const responseTime = Date.now() - startTime;
-    
+
     const healthData = {
       ...appStatus,
       checks: {
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Log health check
-    logInfo('Health check performed', {
+    logInfo("Health check performed", {
       responseTime,
       dbStatus,
       productCount,
@@ -59,17 +60,19 @@ export async function GET(request: NextRequest) {
     });
 
     // Return appropriate status code
-    const statusCode = dbStatus === 'healthy' ? 200 : 503;
-    
+    const statusCode = dbStatus === "healthy" ? 200 : 503;
+
     return NextResponse.json(healthData, { status: statusCode });
   } catch (error) {
-    logError('Health check failed', { error: error instanceof Error ? error.message : 'Unknown error' });
-    
+    logError("Health check failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+
     return NextResponse.json(
       {
-        status: 'unhealthy',
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
-        error: 'Health check failed',
+        error: "Health check failed",
       },
       { status: 503 }
     );

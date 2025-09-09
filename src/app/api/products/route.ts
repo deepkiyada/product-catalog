@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readProducts, addProduct, filterProducts } from "@/lib/fileStorage";
+import { readProducts, addProduct, filterProducts } from "@/lib/database";
 import { Product } from "@/types/product";
 
 // GET /api/products - Get all products or filtered products
@@ -15,7 +15,12 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get("featured");
 
     // Build filters object
-    const filters: any = {};
+    const filters: {
+      category?: string;
+      priceRange?: { min: number; max: number };
+      search?: string;
+      featured?: boolean;
+    } = {};
 
     if (category) filters.category = category;
     if (minPrice && maxPrice) {
@@ -26,17 +31,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) filters.search = search;
+    if (featured === "true") filters.featured = true;
 
     // Get filtered products
-    let products =
+    const products =
       Object.keys(filters).length > 0
-        ? filterProducts(filters)
-        : readProducts();
-
-    // Filter for featured products if requested
-    if (featured === "true") {
-      products = products.filter((product) => product.featured === true);
-    }
+        ? await filterProducts(filters)
+        : await readProducts();
 
     return NextResponse.json({
       success: true,
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       tags: body.tags || [],
     };
 
-    const newProduct = addProduct(productData);
+    const newProduct = await addProduct(productData);
 
     return NextResponse.json(
       {

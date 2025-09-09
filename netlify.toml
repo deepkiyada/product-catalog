@@ -5,7 +5,7 @@
 [build.environment]
   NODE_ENV = "production"
   NEXT_TELEMETRY_DISABLED = "1"
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
 
 # Enable Next.js plugin
 [[plugins]]
@@ -34,18 +34,13 @@
   [headers.values]
     Cache-Control = "public, max-age=300, s-maxage=300"
 
-# Redirects for SPA behavior
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 # Handle client-side routing for SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Environment variables (you'll set these in Netlify dashboard)
-# NODE_ENV = "production"
-# NEXT_PUBLIC_API_URL = "https://your-site.netlify.app"
+# Environment variables (set these in Netlify dashboard)
+# NEXT_PUBLIC_SUPABASE_URL = "your_supabase_url"
+# NEXT_PUBLIC_SUPABASE_ANON_KEY = "your_supabase_anon_key"
+# NEXT_PUBLIC_APP_VERSION = "1.0.0"
