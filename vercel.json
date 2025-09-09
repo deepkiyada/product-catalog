@@ -1,12 +1,6 @@
 {
   "version": 2,
   "name": "kitchen365-product-catalog",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "env": {
     "NODE_ENV": "production",
     "NEXT_PUBLIC_APP_NAME": "Kitchen365",
