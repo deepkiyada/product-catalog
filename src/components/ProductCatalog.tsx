@@ -149,7 +149,7 @@ export default function ProductCatalog() {
       ],
       closeOnEscape: true,
       closeOnClickOutside: true,
-      keyCodeForClose: [8, 32],
+      keyCodeForClose: [], // Remove space and backspace from closing the modal
       willUnmount: () => {},
       onClickOutside: () => {},
       onKeypressEscape: () => {},
@@ -300,20 +300,60 @@ export default function ProductCatalog() {
                         src={product.image}
                         alt={product.name}
                         className="product-image"
+                        loading="lazy"
                         onError={(e) => {
                           // Fallback to placeholder if image fails to load
                           const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
+                          console.warn(
+                            `Failed to load image for product "${product.name}":`,
+                            product.image
+                          );
+
+                          // Try to use the placeholder API as fallback
+                          const fallbackUrl = `/api/placeholder-image?text=${encodeURIComponent(
+                            product.name
+                          )}&width=400&height=300`;
+
+                          // Prevent infinite loop by checking if we're already using fallback
+                          if (
+                            target.src !== fallbackUrl &&
+                            !target.src.includes("/api/placeholder-image")
+                          ) {
+                            target.src = fallbackUrl;
+                          } else {
+                            // If even the fallback fails, hide image and show text placeholder
+                            target.style.display = "none";
+                            const placeholder =
+                              target.nextElementSibling as HTMLElement;
+                            if (placeholder) {
+                              placeholder.style.display = "flex";
+                            }
+                          }
+                        }}
+                        onLoad={(e) => {
+                          // Ensure placeholder is hidden when image loads successfully
+                          const target = e.target as HTMLImageElement;
                           const placeholder =
                             target.nextElementSibling as HTMLElement;
-                          if (placeholder) placeholder.style.display = "flex";
+                          if (placeholder) {
+                            placeholder.style.display = "none";
+                          }
                         }}
                       />
                       <div
                         className="product-image-placeholder"
                         style={{ display: "none" }}
                       >
-                        {product.name}
+                        <span>{product.name}</span>
+                        <small
+                          style={{
+                            opacity: 0.7,
+                            fontSize: "0.75rem",
+                            marginTop: "4px",
+                          }}
+                        >
+                          Image not available
+                        </small>
                       </div>
                       {badgeInfo.badge && (
                         <div
