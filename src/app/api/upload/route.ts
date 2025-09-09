@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
+import {
+  cleanupOldImages,
+  getImageStats,
+  MAX_IMAGES,
+} from "@/lib/imageManager";
 
 // Maximum file size: 1MB
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB in bytes
@@ -17,6 +22,9 @@ const ALLOWED_TYPES = [
 
 export async function POST(request: NextRequest) {
   try {
+    // Check current image stats before processing upload
+    const imageStats = await getImageStats();
+
     const formData = await request.formData();
     const file = formData.get("image") as File;
 
@@ -73,6 +81,12 @@ export async function POST(request: NextRequest) {
     // TODO: Add image optimization with sharp when available
     await writeFile(filePath, buffer);
 
+    // Clean up old images if we exceed the limit
+    const cleanupResult = await cleanupOldImages();
+
+    // Get updated stats after cleanup
+    const updatedStats = await getImageStats();
+
     // Return the public URL path
     const publicUrl = `/uploads/${fileName}`;
 
@@ -85,6 +99,12 @@ export async function POST(request: NextRequest) {
         type: file.type,
       },
       message: "Image uploaded successfully",
+      imageStats: {
+        currentCount: updatedStats.count,
+        maxImages: MAX_IMAGES,
+        deletedImages: cleanupResult.deleted,
+        totalSize: updatedStats.totalSize,
+      },
     });
   } catch (error) {
     console.error("Error uploading image:", error);
@@ -95,12 +115,33 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET endpoint to check upload status or list uploads (optional)
+// GET endpoint to check upload status and image statistics
 export async function GET() {
-  return NextResponse.json({
-    success: true,
-    message: "Image upload endpoint is ready",
-    maxSize: `${MAX_FILE_SIZE / (1024 * 1024)}MB`,
-    allowedTypes: ALLOWED_TYPES,
-  });
+  try {
+    const imageStats = await getImageStats();
+
+    return NextResponse.json({
+      success: true,
+      message: "Image upload endpoint is ready",
+      maxSize: `${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+      allowedTypes: ALLOWED_TYPES,
+      imageStats: {
+        currentCount: imageStats.count,
+        maxImages: MAX_IMAGES,
+        canUpload: imageStats.canUpload,
+        totalSize: imageStats.totalSize,
+        oldestImage: imageStats.oldestImage,
+        newestImage: imageStats.newestImage,
+      },
+    });
+  } catch (error) {
+    console.error("Error getting image stats:", error);
+    return NextResponse.json({
+      success: true,
+      message: "Image upload endpoint is ready",
+      maxSize: `${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+      allowedTypes: ALLOWED_TYPES,
+      error: "Could not retrieve image statistics",
+    });
+  }
 }
