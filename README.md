@@ -1,6 +1,6 @@
-# Kitchen365 Product Catalog
+# Product Catalog
 
-A modern, production-ready e-commerce product catalog built with Next.js 15, TypeScript, and pure CSS. Features a complete product management system with CRUD operations, search, filtering, and responsive design.
+A modern, production-ready e-commerce product catalog built with Next.js 15, TypeScript, and Supabase. Features a complete product management system with CRUD operations, search, filtering, and responsive design.
 
 ## Features
 
@@ -11,18 +11,18 @@ A modern, production-ready e-commerce product catalog built with Next.js 15, Typ
 - 🚀 **Performance Optimized**: Image optimization, caching, and compression
 - 🔒 **Security Hardened**: Rate limiting, input validation, security headers
 - 📊 **Production Ready**: Monitoring, logging, and error handling
-- 🐳 **Docker Support**: Containerized deployment
-- ☁️ **Cloud Ready**: Vercel, Docker, and traditional server deployment
+- 🗄️ **Database**: Supabase integration for serverless compatibility
+- ☁️ **Serverless Ready**: Vercel and Netlify deployment optimized
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
+- **Database**: Supabase (PostgreSQL)
 - **Styling**: Pure CSS with CSS Variables
 - **State Management**: React Hooks
-- **Data Storage**: File-based JSON (easily replaceable with database)
 - **Image Optimization**: Next.js Image component
-- **Deployment**: Vercel, Docker, or traditional servers
+- **Deployment**: Vercel, Netlify (serverless-ready)
 
 ## Getting Started
 

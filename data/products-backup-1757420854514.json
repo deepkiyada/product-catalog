@@ -1,0 +1,59 @@
+[
+  {
+    "name": "Premium Kitchen Knife Set",
+    "price": 129.99,
+    "category": "Kitchen Tools",
+    "image": "/products/knife-set.jpg",
+    "images": [
+      "/products/knife-set.jpg",
+      "/products/knife-set-2.jpg"
+    ],
+    "featured": true,
+    "tags": [
+      "knives",
+      "kitchen",
+      "professional",
+      "cooking",
+      "new"
+    ],
+    "id": "1757343222369fugy3yna4"
+  },
+  {
+    "name": "Electric Mixer",
+    "price": 159.99,
+    "category": "Appliances",
+    "image": "/products/mixer.jpg",
+    "images": [
+      "/products/mixer.jpg",
+      "/products/mixer-2.jpg"
+    ],
+    "featured": false,
+    "tags": [
+      "mixer",
+      "baking",
+      "appliance",
+      "stand-mixer"
+    ],
+    "id": "1757343222369uwy9qno2t"
+  },
+  {
+    "name": "New",
+    "price": 12345,
+    "category": "Kitchen Tools",
+    "image": "/api/placeholder-image?text=New&width=400&height=300",
+    "images": [],
+    "featured": false,
+    "tags": [],
+    "id": "1757344876567nh9bc2eze"
+  },
+  {
+    "name": "react",
+    "price": 397,
+    "category": "Kitchen Tools",
+    "image": "/api/placeholder-image?text=react&width=400&height=300",
+    "images": [],
+    "featured": false,
+    "tags": [],
+    "id": "1757354356260h2juah42h"
+  }
+]

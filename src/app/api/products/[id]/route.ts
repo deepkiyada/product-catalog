@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  findProductById,
-  updateProduct,
-  deleteProduct,
-} from "@/lib/fileStorage";
+import { findProductById, updateProduct, deleteProduct } from "@/lib/database";
 
 // GET /api/products/[id] - Get a specific product by ID
 export async function GET(
@@ -20,7 +16,7 @@ export async function GET(
       );
     }
 
-    const product = findProductById(id);
+    const product = await findProductById(id);
 
     if (!product) {
       return NextResponse.json(
@@ -59,7 +55,7 @@ export async function PUT(
     }
 
     // Check if product exists
-    const existingProduct = findProductById(id);
+    const existingProduct = await findProductById(id);
     if (!existingProduct) {
       return NextResponse.json(
         { success: false, error: "Product not found" },
@@ -89,7 +85,7 @@ export async function PUT(
     }
 
     // Update the product
-    const updatedProduct = updateProduct(id, body);
+    const updatedProduct = await updateProduct(id, body);
 
     if (!updatedProduct) {
       return NextResponse.json(
@@ -137,7 +133,7 @@ export async function DELETE(
     }
 
     // Check if product exists
-    const existingProduct = findProductById(id);
+    const existingProduct = await findProductById(id);
     if (!existingProduct) {
       return NextResponse.json(
         { success: false, error: "Product not found" },
@@ -146,7 +142,7 @@ export async function DELETE(
     }
 
     // Delete the product
-    const deleted = deleteProduct(id);
+    const deleted = await deleteProduct(id);
 
     if (!deleted) {
       return NextResponse.json(

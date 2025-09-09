@@ -69,8 +69,11 @@ const nextConfig = {
 
   // Experimental features for performance
   experimental: {
-    optimizePackageImports: ["lucide-react"],
+    optimizePackageImports: ["lucide-react", "react-hot-toast"],
   },
+
+  // Server external packages
+  serverExternalPackages: ["@supabase/supabase-js"],
 
   // Output configuration optimized for Netlify
   // Note: Netlify plugin handles the output configuration automatically
@@ -78,6 +81,7 @@ const nextConfig = {
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
+      // Optimize bundle splitting
       config.optimization.splitChunks = {
         chunks: "all",
         cacheGroups: {
@@ -86,9 +90,38 @@ const nextConfig = {
             name: "vendors",
             chunks: "all",
           },
+          supabase: {
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            name: "supabase",
+            chunks: "all",
+            priority: 10,
+          },
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "react",
+            chunks: "all",
+            priority: 10,
+          },
         },
       };
+
+      // Tree shaking optimizations
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
     }
+
+    // Bundle analyzer
+    if (process.env.ANALYZE === "true") {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: "static",
+          openAnalyzer: false,
+        })
+      );
+    }
+
     return config;
   },
 };
