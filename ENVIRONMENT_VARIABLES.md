@@ -2,23 +2,35 @@
 
 This document describes all environment variables used in the Product Catalog application.
 
+## ✅ Current Data Storage: Supabase Database
+
+**Important**: This application now uses Supabase PostgreSQL database for all data storage. Local JSON files are no longer used.
+
 ## Required Variables
 
-### Supabase Configuration
+### Supabase Configuration (Required for both Local & Production)
 
-| Variable | Description | Example | Required |
-|----------|-------------|---------|----------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | `https://abc123.supabase.co` | ✅ Yes |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous/public key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | ✅ Yes |
+| Variable                        | Description                   | Example                                   | Required |
+| ------------------------------- | ----------------------------- | ----------------------------------------- | -------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase project URL     | `https://abc123.supabase.co`              | ✅ Yes   |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous/public key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | ✅ Yes   |
+
+### ⚠️ Data Synchronization
+
+Both local and production environments connect to the **same Supabase database**, so:
+
+- ✅ Data is automatically synchronized
+- ✅ Changes in local development appear in production
+- ✅ Changes in production appear in local development
 
 ### Optional Variables
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key for admin operations | - | ❌ No |
-| `NEXT_PUBLIC_APP_VERSION` | Application version | `1.0.0` | ❌ No |
-| `NEXT_PUBLIC_APP_NAME` | Application name | `Product Catalog` | ❌ No |
-| `NODE_ENV` | Environment mode | `development` | ❌ No |
+| Variable                    | Description                           | Default           | Required |
+| --------------------------- | ------------------------------------- | ----------------- | -------- |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key for admin operations | -                 | ❌ No    |
+| `NEXT_PUBLIC_APP_VERSION`   | Application version                   | `1.0.0`           | ❌ No    |
+| `NEXT_PUBLIC_APP_NAME`      | Application name                      | `Product Catalog` | ❌ No    |
+| `NODE_ENV`                  | Environment mode                      | `development`     | ❌ No    |
 
 ## Platform-Specific Setup
 
@@ -49,6 +61,7 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 ### Local Development
 
 1. Copy the example file:
+
    ```bash
    cp .env.example .env.local
    ```
@@ -73,11 +86,13 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 ⚠️ **Important Security Guidelines:**
 
 1. **Public vs Private Keys**:
+
    - `NEXT_PUBLIC_*` variables are exposed to the browser
    - Never put sensitive data in `NEXT_PUBLIC_*` variables
    - The anon key is safe to expose as it has limited permissions
 
 2. **Service Role Key**:
+
    - Only use if you need admin operations
    - Never expose this key to the browser
    - Keep it secure and rotate regularly
@@ -95,11 +110,13 @@ The application validates required environment variables on startup. If any requ
 ### Common Issues
 
 1. **"Missing Supabase environment variables" error**:
+
    - Ensure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set
    - Check for typos in variable names
    - Verify the values are correct
 
 2. **Database connection errors**:
+
    - Verify your Supabase project is active
    - Check if the URL and key are correct
    - Ensure your database has the required tables
