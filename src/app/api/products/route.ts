@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    const requiredFields = ["name", "price", "category", "image"];
+    const requiredFields = ["name", "price", "category"];
     const missingFields = requiredFields.filter((field) => !body[field]);
 
     if (missingFields.length > 0) {
@@ -80,13 +80,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set default values
+    // Set default values and generate placeholder image if not provided
+    const imageUrl =
+      body.image ||
+      `/api/placeholder-image?text=${encodeURIComponent(
+        body.name
+      )}&width=400&height=300`;
+
     const productData: Omit<Product, "id"> = {
       name: body.name,
       price: body.price,
       originalPrice: body.originalPrice,
       category: body.category,
-      image: body.image,
+      image: imageUrl,
       images: body.images || [],
       featured: body.featured || false,
       tags: body.tags || [],
