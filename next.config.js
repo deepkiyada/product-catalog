@@ -20,6 +20,34 @@ const nextConfig = {
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Allow external image domains
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+    // Common image hosting domains (more specific patterns for better security)
+    domains: [
+      "unsplash.com",
+      "images.unsplash.com",
+      "cdn.pixabay.com",
+      "images.pexels.com",
+      "via.placeholder.com",
+      "picsum.photos",
+      "source.unsplash.com",
+      "img.freepik.com",
+      "cdn.shopify.com",
+      "images.ctfassets.net",
+      "res.cloudinary.com",
+      "firebasestorage.googleapis.com",
+      "s3.amazonaws.com",
+      "storage.googleapis.com",
+    ],
   },
 
   // Security headers
