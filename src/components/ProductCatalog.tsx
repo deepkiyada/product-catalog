@@ -7,6 +7,8 @@ import { confirmAlert } from "react-confirm-alert";
 import toast from "react-hot-toast";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { showAddProductModal } from "./AddProductModal";
+import { useNotifications } from "./NotificationContainer";
+import ErrorNotification from "./ErrorNotification";
 import { Trash2, ShoppingCart, Plus } from "lucide-react";
 
 // Helper function to determine badge type based on product data
@@ -55,28 +57,56 @@ export default function ProductCatalog() {
     null
   );
 
-  // Fetch products from API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await ProductAPI.getProducts();
+  const notifications = useNotifications();
 
-        if (response.success && response.data) {
-          setProducts(response.data);
-          setCategories(getCategories(response.data));
-        } else {
-          setError(response.error || "Failed to fetch products");
-        }
-      } catch (err) {
-        setError("An unexpected error occurred");
-        console.error("Error fetching products:", err);
-      } finally {
-        setLoading(false);
+  // Fetch products from API with improved error handling
+  const fetchProducts = async (showRetryNotification = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (showRetryNotification) {
+        notifications.showInfo("Retrying to load products...");
       }
-    };
 
+      const response = await ProductAPI.getProducts();
+
+      if (response.success && response.data) {
+        setProducts(response.data);
+        setCategories(getCategories(response.data));
+
+        if (showRetryNotification) {
+          notifications.showSuccess("Products loaded successfully!");
+        }
+      } else {
+        const errorMessage = response.error || "Failed to fetch products";
+        setError(errorMessage);
+
+        notifications.showError("Failed to load products", {
+          title: "Loading Error",
+          message: errorMessage,
+          onRetry: () => fetchProducts(true),
+        });
+      }
+    } catch (err) {
+      const errorMessage =
+        "An unexpected error occurred while loading products";
+      setError(errorMessage);
+      console.error("Error fetching products:", err);
+
+      notifications.showError("Connection Error", {
+        title: "Network Error",
+        message:
+          "Unable to connect to the server. Please check your internet connection.",
+        details: err instanceof Error ? err.message : "Unknown error",
+        onRetry: () => fetchProducts(true),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -123,24 +153,43 @@ export default function ProductCatalog() {
                 );
                 setCategories(getCategories(updatedProducts));
 
-                // Show success toast
-                toast.success(
+                // Show success notification
+                notifications.showSuccess(
                   `"${product.name}" has been deleted successfully!`,
                   {
-                    duration: 4000,
-                    icon: "🗑️",
+                    title: "Product Deleted",
                   }
                 );
+
+                // Also show toast for immediate feedback
+                toast.success(`"${product.name}" deleted!`, {
+                  duration: 3000,
+                  icon: "🗑️",
+                });
               } else {
-                setError(response.error || "Failed to delete product");
-                toast.error(response.error || "Failed to delete product");
+                const errorMessage =
+                  response.error || "Failed to delete product";
+                setError(errorMessage);
+
+                notifications.showError("Delete Failed", {
+                  title: "Unable to Delete Product",
+                  message: errorMessage,
+                  onRetry: () => handleDeleteProduct(product),
+                });
               }
             } catch (err) {
               const errorMessage =
                 "An unexpected error occurred while deleting the product";
               setError(errorMessage);
-              toast.error(errorMessage);
               console.error("Error deleting product:", err);
+
+              notifications.showError("Delete Error", {
+                title: "Unexpected Error",
+                message:
+                  "Something went wrong while trying to delete the product.",
+                details: err instanceof Error ? err.message : "Unknown error",
+                onRetry: () => handleDeleteProduct(product),
+              });
             } finally {
               setDeletingProductId(null);
             }
@@ -264,13 +313,14 @@ export default function ProductCatalog() {
 
           {error && (
             <div className="error-container">
-              <p className="error-message">❌ {error}</p>
-              <button
-                className="retry-btn"
-                onClick={() => window.location.reload()}
-              >
-                Try Again
-              </button>
+              <ErrorNotification
+                type="error"
+                title="Failed to Load Products"
+                message={error}
+                onRetry={() => fetchProducts(true)}
+                onClose={() => setError(null)}
+                showIcon={true}
+              />
             </div>
           )}
 
@@ -282,9 +332,9 @@ export default function ProductCatalog() {
                   : "No products available. Try seeding some sample data!"}
               </p>
               {!searchQuery && activeCategory === "All" && (
-                <a href="/api-test" className="seed-link">
-                  Go to API Test Page to Add Products
-                </a>
+                <p className="seed-link">
+                  Please add product by clicking on "Add New Product" button.
+                </p>
               )}
             </div>
           )}

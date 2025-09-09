@@ -13,7 +13,6 @@ export const sampleProducts: Omit<Product, "id">[] = [
   {
     name: "Stainless Steel Cookware",
     price: 89.99,
-    originalPrice: 119.99,
     category: "Cookware",
     image: "/products/cookware.jpg",
     images: ["/products/cookware.jpg", "/products/cookware-2.jpg"],

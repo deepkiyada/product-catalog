@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findProductById, updateProduct, deleteProduct } from "@/lib/database";
+import {
+  withErrorHandler,
+  NotFoundError,
+  ValidationError,
+} from "@/lib/errorHandler";
 
 // GET /api/products/[id] - Get a specific product by ID
 export async function GET(
@@ -118,48 +123,42 @@ export async function PATCH(
 }
 
 // DELETE /api/products/[id] - Delete a specific product
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+export const DELETE = withErrorHandler(
+  async (
+    _request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+  ) => {
     const { id } = await params;
 
-    if (!id) {
-      return NextResponse.json(
-        { success: false, error: "Product ID is required" },
-        { status: 400 }
-      );
+    if (!id || id.trim() === "") {
+      throw new ValidationError("Product ID is required");
+    }
+
+    // Validate UUID format (basic check)
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new ValidationError("Invalid product ID format");
     }
 
     // Check if product exists
     const existingProduct = await findProductById(id);
     if (!existingProduct) {
-      return NextResponse.json(
-        { success: false, error: "Product not found" },
-        { status: 404 }
-      );
+      throw new NotFoundError("Product not found");
     }
 
     // Delete the product
     const deleted = await deleteProduct(id);
 
     if (!deleted) {
-      return NextResponse.json(
-        { success: false, error: "Failed to delete product" },
-        { status: 500 }
-      );
+      throw new Error("Failed to delete product from database");
     }
 
     return NextResponse.json({
       success: true,
       message: "Product deleted successfully",
+      data: { deletedProductId: id, deletedProductName: existingProduct.name },
     });
-  } catch (error) {
-    console.error("Error deleting product:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to delete product" },
-      { status: 500 }
-    );
-  }
-}
+  },
+  "DELETE /api/products/[id]"
+);
